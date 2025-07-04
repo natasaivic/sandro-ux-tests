@@ -53,7 +53,16 @@ pytest --html=test-results/report.html
 
 ## Available Tests
 
-- `test_navigation.py` - Basic homepage navigation and verification
+- `test_navigation.py` - Homepage navigation and Women section tests
+  - `test_navigate_to_homepage` - Verifies homepage loads correctly
+  - `test_navigate_to_women_section` - Navigates to Women's clothing section with modal handling
+
+## Test Features
+
+- **Modal Handling**: Automatically handles privacy consent modals and promotional banners
+- **Robust Navigation**: Uses multiple selector strategies for reliable element finding
+- **Visual Feedback**: 5-second pause before browser closes to see results
+- **Headed Mode**: Tests run with visible browser by default
 
 ## Test Configuration
 

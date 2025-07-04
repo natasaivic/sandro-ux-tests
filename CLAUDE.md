@@ -43,8 +43,30 @@ playwright install
 pytest
 
 # Run specific test file
-pytest tests/test_filename.py
+pytest tests/test_navigation.py
 
 # Run with browser UI visible
 pytest --headed
 ```
+
+## Test Implementation Notes
+
+### Modal Handling
+- Tests automatically handle privacy consent modals using "Agree and Close" button
+- Promotional banners are closed using `.close-button` selector
+- Modal handling is implemented with conditional checks to avoid test failures
+
+### Navigation Strategy
+- Primary: Uses promotional banner links ("Shop Women") when available
+- Fallback: Uses main navigation selectors for reliability
+- Multiple selector strategies ensure tests work across different page states
+
+### Test Timing
+- Uses `wait_for_load_state("load")` instead of `networkidle` for better reliability
+- Includes 5-second pause before browser closes for visual confirmation
+- Timeout handling prevents hanging tests
+
+### Current Test Coverage
+- Homepage navigation and verification
+- Women's section navigation with modal handling
+- Basic page content verification

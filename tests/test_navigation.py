@@ -18,3 +18,46 @@ def test_navigate_to_homepage(page: Page):
     
     # Basic page content verification
     expect(page.locator("body")).to_be_visible()
+
+
+def test_navigate_to_women_section(page: Page):
+    """Test navigation to Women section from homepage"""
+    base_url = os.getenv("BASE_URL", "https://us.sandro-paris.com/")
+    
+    # Navigate to homepage
+    page.goto(base_url)
+    
+    # Wait for page to load
+    page.wait_for_load_state("load")
+    
+    # Handle privacy consent modal if present
+    privacy_close_button = page.locator("button:has-text('Agree and Close')")
+    if privacy_close_button.is_visible():
+        privacy_close_button.click()
+    
+    # Close promotional banner if present
+    banner_close = page.locator(".close-button").first
+    if banner_close.is_visible():
+        banner_close.click()
+    
+    # Use the "Shop Women" link from the promotional banner (more reliable)
+    women_link = page.locator("a:has-text('Shop Women')")
+    if women_link.is_visible():
+        women_link.click()
+    else:
+        # Fallback to main navigation
+        women_nav_link = page.locator("nav a[href*='women'], nav a:has-text('Women')").first
+        expect(women_nav_link).to_be_visible()
+        women_nav_link.click()
+    
+    # Verify navigation to Women section
+    expect(page).to_have_url(re.compile(r".*women.*", re.IGNORECASE))
+    
+    # Verify Women section page loaded
+    expect(page.locator("body")).to_be_visible()
+    
+    # Verify page contains clothing categories (indicating successful navigation to women's section)
+    expect(page.locator("h1")).to_contain_text("All Clothing", ignore_case=True)
+    
+    # Pause for 5 seconds to see the results
+    page.wait_for_timeout(5000)
