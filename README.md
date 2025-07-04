@@ -32,25 +32,45 @@ Automated end-to-end tests for core user flows on the Sandro Paris website, incl
 ## Running Tests
 
 ```bash
+# Activate virtual environment first
+source venv/bin/activate
+
 # Run all tests
 pytest
 
 # Run specific test file
-pytest tests/test_filename.py
+pytest tests/test_navigation.py
 
-# Run with browser UI visible
+# Run with browser UI visible (headless mode off)
 pytest --headed
 
 # Run with custom base URL
 BASE_URL=https://staging.sandro-paris.com pytest
+
+# Run with HTML report
+pytest --html=test-results/report.html
 ```
+
+## Available Tests
+
+- `test_navigation.py` - Basic homepage navigation and verification
+
+## Test Configuration
+
+Tests are configured via `pytest.ini` with default settings:
+- Browser: Chromium
+- Mode: Headed (visible browser)
+- Reports: HTML report generated in `test-results/`
 
 ## Project Structure
 
 ```
 ├── tests/              # Test files
+│   └── test_navigation.py  # Homepage navigation test
 ├── requirements.txt    # Python dependencies
+├── pytest.ini         # Pytest configuration
 ├── .env               # Environment variables
 ├── .gitignore         # Git ignore rules
+├── venv/              # Virtual environment
 └── README.md          # This file
 ```
