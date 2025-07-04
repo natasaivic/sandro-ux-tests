@@ -66,7 +66,21 @@ pytest --headed
 - Includes 5-second pause before browser closes for visual confirmation
 - Timeout handling prevents hanging tests
 
+### Product Selection Strategy
+- Uses `.product a` selector for finding product links (tested and reliable)
+- Validates minimum product count before attempting selection
+- Selects second product (index 1) to avoid potential featured/promotional first items
+- 3-second timeout allows for dynamic content loading
+
 ### Current Test Coverage
-- Homepage navigation and verification
-- Women's section navigation with modal handling
-- Basic page content verification
+- **Homepage navigation and verification** - Title, URL, and content validation
+- **Women's section navigation** - Modal handling and category access
+- **Product discovery and selection** - Finds 32+ products and selects second item
+- **Product page verification** - Confirms successful navigation to product details
+- **End-to-end flow** - Complete user journey from homepage to product page
+
+### Selector Strategy Notes
+- Primary product selector: `.product a` (proven to work with 32+ products)
+- Modal selectors: `button:has-text('Agree and Close')` and `.close-button`
+- Navigation selectors: Multiple fallback strategies for reliability
+- Product validation: Ensures minimum count before proceeding with selection

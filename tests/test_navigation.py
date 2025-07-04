@@ -59,5 +59,28 @@ def test_navigate_to_women_section(page: Page):
     # Verify page contains clothing categories (indicating successful navigation to women's section)
     expect(page.locator("h1")).to_contain_text("All Clothing", ignore_case=True)
     
+    # Wait for product grid to load
+    page.wait_for_timeout(3000)  # Give time for products to load
+    
+    # Find product links (tested working selector)
+    product_links = page.locator(".product a")
+    
+    # Ensure we have at least 2 products
+    expect(product_links.first).to_be_visible()
+    count = product_links.count()
+    assert count >= 2, f"Expected at least 2 products, but found {count}"
+    
+    # Click on the second product (index 1)
+    second_product = product_links.nth(1)
+    expect(second_product).to_be_visible()
+    second_product.click()
+    
+    # Verify navigation to product detail page
+    expect(page.locator("body")).to_be_visible()
+    
+    # Verify we're on a product page (URL should contain product info)
+    page.wait_for_load_state("load")
+    expect(page.locator("h1, .product-title, [data-testid*='title']")).to_be_visible()
+    
     # Pause for 5 seconds to see the results
     page.wait_for_timeout(5000)

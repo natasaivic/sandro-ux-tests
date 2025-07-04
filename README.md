@@ -53,16 +53,26 @@ pytest --html=test-results/report.html
 
 ## Available Tests
 
-- `test_navigation.py` - Homepage navigation and Women section tests
+- `test_navigation.py` - Complete navigation flow from homepage to product selection
   - `test_navigate_to_homepage` - Verifies homepage loads correctly
-  - `test_navigate_to_women_section` - Navigates to Women's clothing section with modal handling
+  - `test_navigate_to_women_section` - End-to-end navigation: Homepage → Women's Section → Product Selection
+
+## Test Coverage
+
+### Navigation Flow
+1. **Homepage verification** - Title, URL, and basic content checks
+2. **Women's section navigation** - Modal handling and category navigation
+3. **Product selection** - Finds and clicks on the second product from the listing
+4. **Product page verification** - Confirms successful navigation to product details
 
 ## Test Features
 
 - **Modal Handling**: Automatically handles privacy consent modals and promotional banners
+- **Product Discovery**: Uses `.product a` selector to find product links (32+ products detected)
 - **Robust Navigation**: Uses multiple selector strategies for reliable element finding
 - **Visual Feedback**: 5-second pause before browser closes to see results
 - **Headed Mode**: Tests run with visible browser by default
+- **Product Selection**: Automatically selects the second product from the women's clothing listing
 
 ## Test Configuration
 
