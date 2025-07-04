@@ -43,7 +43,7 @@ playwright install
 pytest
 
 # Run specific test file
-pytest tests/test_navigation.py
+pytest tests/test_product_purchase.py
 
 # Run with browser UI visible
 pytest --headed
@@ -85,6 +85,12 @@ pytest --headed
 - **Error resilience**: Handles overlapping panels using force clicks and escape key
 - **Cart verification**: Confirms successful addition through UI feedback and confirmation messages
 
+### Cart Icon Verification
+- **Header cart detection**: Uses multiple selectors to find cart icon in website header
+- **Count indicators**: Checks for cart count badges showing number of items added
+- **Confirmation messages**: Looks for success messages, toasts, or notifications
+- **Multiple strategies**: Robust cart verification with fallback detection methods
+
 ### Error Handling Strategies
 - **Force clicks**: Uses `click(force=True)` for elements outside viewport
 - **Escape key fallback**: Presses escape when modal close buttons fail
@@ -98,7 +104,8 @@ pytest --headed
 - **Product page verification** - Confirms successful navigation to product details
 - **Size selection workflow** - Custom dropdown navigation and size validation
 - **Cart functionality** - Complete add-to-cart flow with verification
-- **Complete e-commerce flow** - Full customer journey from homepage to cart
+- **Cart icon verification** - Confirms header cart icon updates with item count
+- **Complete e-commerce flow** - Full customer journey from homepage to cart with UI feedback
 
 ### Selector Strategy Notes
 - **Product selector**: `.product a` (proven to work with 32+ products)

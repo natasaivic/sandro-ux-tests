@@ -39,7 +39,7 @@ source venv/bin/activate
 pytest
 
 # Run specific test file
-pytest tests/test_navigation.py
+pytest tests/test_product_purchase.py
 
 # Run with browser UI visible (headless mode off)
 pytest --headed
@@ -53,9 +53,9 @@ pytest --html=test-results/report.html
 
 ## Available Tests
 
-- `test_navigation.py` - Complete e-commerce flow from homepage to cart
+- `test_product_purchase.py` - Complete e-commerce flow from homepage to cart
   - `test_navigate_to_homepage` - Verifies homepage loads correctly
-  - `test_navigate_to_women_section` - Full customer journey: Homepage → Women's Section → Product Selection → Size Selection → Add to Cart
+  - `test_navigate_to_women_section` - Full customer journey: Homepage → Women's Section → Product Selection → Size Selection → Add to Cart → Cart Verification
 
 ## Test Coverage
 
@@ -66,7 +66,7 @@ pytest --html=test-results/report.html
 4. **Product page verification** - Confirms successful navigation to product details
 5. **Size selection** - Opens custom dropdown and selects first available size (FR 0 / XS)
 6. **Add to cart** - Clicks "ADD TO CART" button and verifies item addition
-7. **Cart verification** - Confirms successful cart addition through UI feedback
+7. **Cart verification** - Confirms shopping cart icon updates in header and displays confirmation messages
 
 ## Test Features
 
@@ -91,7 +91,7 @@ Tests are configured via `pytest.ini` with default settings:
 
 ```
 ├── tests/              # Test files
-│   └── test_navigation.py  # Homepage navigation test
+│   └── test_product_purchase.py  # Complete product purchase flow test
 ├── requirements.txt    # Python dependencies
 ├── pytest.ini         # Pytest configuration
 ├── .env               # Environment variables

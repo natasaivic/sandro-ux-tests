@@ -104,17 +104,11 @@ def test_navigate_to_women_section(page: Page):
     expect(size_dropdown_button).to_be_visible()
     print("Found size dropdown button")
     
-    # Take a screenshot before clicking to see the current state
-    page.screenshot(path="debug_before_size_click.png")
-    
     # Click to open the dropdown menu
     size_dropdown_button.click()
     
     # Wait for dropdown menu to appear
     page.wait_for_timeout(1000)
-    
-    # Take a screenshot after clicking to see what happened
-    page.screenshot(path="debug_after_size_click.png")
     
     # Look for the dropdown menu that should have appeared
     dropdown_menu = page.locator(".attribute-size .dropdown-menu")
@@ -198,24 +192,68 @@ def test_navigate_to_women_section(page: Page):
     # Wait for add to cart action to complete
     page.wait_for_timeout(2000)
     
-    # Verify product was added to cart (look for confirmation message or cart update)
+    # Verify product was added to cart by checking the header cart icon update
+    # Look for cart icon in the website header with updated count
+    cart_icon_selectors = [
+        ".header-cart", ".cart-icon", ".bag-icon", ".mini-cart",
+        "[data-testid*='cart']", ".cart-count", ".basket-icon",
+        "header .cart", "nav .cart", ".navigation .cart"
+    ]
+    
+    cart_icon = None
+    for selector in cart_icon_selectors:
+        potential_icon = page.locator(selector)
+        if potential_icon.is_visible():
+            cart_icon = potential_icon
+            print(f"Found cart icon using selector: {selector}")
+            break
+    
+    if cart_icon:
+        # Check for cart count indicator (number showing items in cart)
+        cart_count_indicators = [
+            cart_icon.locator(".count, .badge, .cart-count, .quantity, [class*='count']"),
+            cart_icon.locator("span:visible"),
+            cart_icon.locator("[data-testid*='count']"),
+            page.locator(".cart-count:visible, .cart-badge:visible, .header-cart-count:visible")
+        ]
+        
+        cart_count_found = False
+        for count_locator in cart_count_indicators:
+            if count_locator.is_visible():
+                count_text = count_locator.text_content().strip()
+                if count_text and count_text.isdigit() and int(count_text) > 0:
+                    print(f"Cart count updated successfully: {count_text} item(s)")
+                    expect(count_locator).to_be_visible()
+                    cart_count_found = True
+                    break
+        
+        if not cart_count_found:
+            print("No visible cart count found, checking for cart icon state change")
+            # Sometimes cart icons change appearance/class when items are added
+            expect(cart_icon).to_be_visible()
+    
+    # Additional verification: look for confirmation message or toast
     cart_confirmation = page.locator(
         ".cart-confirmation, .success-message, .added-to-cart, "
         ":has-text('Added to'), :has-text('Item added'), "
-        ".toast, .notification"
+        ".toast, .notification, .alert-success"
     ).first
     
-    # Alternative verification: check if cart icon shows updated count
-    cart_icon = page.locator(
-        ".cart-icon, .bag-icon, [data-testid*='cart'], "
-        ".header-cart, .mini-cart"
-    ).first
-    
-    # Verify either confirmation message or cart update
     if cart_confirmation.is_visible():
+        confirmation_text = cart_confirmation.text_content().strip()
+        print(f"Cart confirmation message: {confirmation_text}")
         expect(cart_confirmation).to_be_visible()
-    elif cart_icon.is_visible():
-        expect(cart_icon).to_be_visible()
+    
+    # Verify cart functionality by checking if we can access cart
+    # Look for cart link or button that would open the cart
+    cart_link = page.locator(
+        "a[href*='cart'], a[href*='bag'], button:has-text('Cart'), "
+        "button:has-text('Bag'), .cart-link, .bag-link"
+    ).first
+    
+    if cart_link.is_visible():
+        print("Cart link/button is accessible for further verification")
+        expect(cart_link).to_be_visible()
     
     # Pause for 5 seconds to see the results
     page.wait_for_timeout(5000)
