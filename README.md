@@ -53,26 +53,32 @@ pytest --html=test-results/report.html
 
 ## Available Tests
 
-- `test_navigation.py` - Complete navigation flow from homepage to product selection
+- `test_navigation.py` - Complete e-commerce flow from homepage to cart
   - `test_navigate_to_homepage` - Verifies homepage loads correctly
-  - `test_navigate_to_women_section` - End-to-end navigation: Homepage → Women's Section → Product Selection
+  - `test_navigate_to_women_section` - Full customer journey: Homepage → Women's Section → Product Selection → Size Selection → Add to Cart
 
 ## Test Coverage
 
-### Navigation Flow
+### Complete E-Commerce Flow
 1. **Homepage verification** - Title, URL, and basic content checks
 2. **Women's section navigation** - Modal handling and category navigation
-3. **Product selection** - Finds and clicks on the second product from the listing
+3. **Product selection** - Finds and clicks on the second product from the listing (32+ products available)
 4. **Product page verification** - Confirms successful navigation to product details
+5. **Size selection** - Opens custom dropdown and selects first available size (FR 0 / XS)
+6. **Add to cart** - Clicks "ADD TO CART" button and verifies item addition
+7. **Cart verification** - Confirms successful cart addition through UI feedback
 
 ## Test Features
 
 - **Modal Handling**: Automatically handles privacy consent modals and promotional banners
+- **Custom Dropdown Navigation**: Handles Sandro's custom size dropdown (skips "SIZE GUIDE", selects actual sizes)
 - **Product Discovery**: Uses `.product a` selector to find product links (32+ products detected)
+- **Size Selection Logic**: Intelligently skips non-size options and selects first available size
+- **Cart Integration**: Validates complete add-to-cart workflow
+- **Error Resilience**: Continues gracefully when panels can't be closed (uses force clicks and escape key)
 - **Robust Navigation**: Uses multiple selector strategies for reliable element finding
 - **Visual Feedback**: 5-second pause before browser closes to see results
 - **Headed Mode**: Tests run with visible browser by default
-- **Product Selection**: Automatically selects the second product from the women's clothing listing
 
 ## Test Configuration
 

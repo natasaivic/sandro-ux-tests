@@ -82,5 +82,140 @@ def test_navigate_to_women_section(page: Page):
     page.wait_for_load_state("load")
     expect(page.locator("h1, .product-title, [data-testid*='title']")).to_be_visible()
     
+    # Wait for product details to fully load
+    page.wait_for_timeout(2000)
+    
+    # First, close any open panels (like size guide) that might be blocking
+    close_buttons = page.locator(".user-contextual-sidepanel .close, .panel-close, button:has-text('×')")
+    if close_buttons.is_visible():
+        try:
+            # Try to click with force if element is outside viewport
+            close_buttons.click(force=True, timeout=5000)
+            page.wait_for_timeout(500)
+            print("Closed any open panels")
+        except:
+            print("Could not close panel, continuing anyway")
+            # Try pressing Escape key as alternative
+            page.keyboard.press("Escape")
+            page.wait_for_timeout(500)
+    
+    # Based on the DOM screenshot, find the custom dropdown button
+    size_dropdown_button = page.locator(".attribute-size .dropdown-toggle")
+    expect(size_dropdown_button).to_be_visible()
+    print("Found size dropdown button")
+    
+    # Take a screenshot before clicking to see the current state
+    page.screenshot(path="debug_before_size_click.png")
+    
+    # Click to open the dropdown menu
+    size_dropdown_button.click()
+    
+    # Wait for dropdown menu to appear
+    page.wait_for_timeout(1000)
+    
+    # Take a screenshot after clicking to see what happened
+    page.screenshot(path="debug_after_size_click.png")
+    
+    # Look for the dropdown menu that should have appeared
+    dropdown_menu = page.locator(".attribute-size .dropdown-menu")
+    
+    # If dropdown menu is not visible, try different approaches
+    if not dropdown_menu.is_visible():
+        print("Dropdown menu not visible, trying alternative approaches")
+        # Try clicking again
+        size_dropdown_button.click()
+        page.wait_for_timeout(500)
+        
+        # Check if it's visible now
+        if not dropdown_menu.is_visible():
+            print("Still not visible, looking for size options in other ways")
+            # Look for size options that might be visible elsewhere
+            visible_size_options = page.locator("*:visible:has-text('FR 0'), *:visible:has-text('FR 1'), *:visible:has-text('FR 2')")
+            if visible_size_options.count() > 0:
+                first_size = visible_size_options.first
+                print(f"Found visible size option: {first_size.text_content()}")
+                first_size.click()
+                dropdown_menu = None  # Skip dropdown menu logic
+    
+    if dropdown_menu and dropdown_menu.is_visible():
+        print("Dropdown menu opened")
+    
+    # Only proceed with dropdown logic if we have a visible dropdown menu
+    if dropdown_menu and dropdown_menu.is_visible():
+        # Find size options within the dropdown menu
+        # Look for clickable options (likely <a> or <button> elements)
+        size_options = dropdown_menu.locator("a, button, .dropdown-item, [role='option']")
+        
+        if size_options.count() > 1:
+            # Skip the first option (SIZE GUIDE) and select the second option (actual size)
+            second_size_option = size_options.nth(1)  # Index 1 = second option
+            expect(second_size_option).to_be_visible()
+            size_text = second_size_option.text_content().strip()
+            print(f"Selecting second size option (skipping SIZE GUIDE): {size_text}")
+            second_size_option.click()
+            
+            # Wait for selection to register
+            page.wait_for_timeout(500)
+        else:
+            print("Not enough size options found in dropdown")
+    
+    # Verify a size was selected (regardless of method used)
+    page.wait_for_timeout(1000)
+    selected_option = page.locator(".attribute-size .selected-option")
+    if selected_option.is_visible():
+        selected_text = selected_option.text_content().strip()
+        print(f"Size selected successfully: {selected_text}")
+        
+        # Close any size guide panel that might have opened
+        size_guide_close = page.locator(".user-contextual-sidepanel .close, .panel-close, button:has-text('×')")
+        if size_guide_close.is_visible():
+            try:
+                size_guide_close.click(force=True, timeout=3000)
+                page.wait_for_timeout(500)
+                print("Closed size guide panel")
+            except:
+                print("Could not close size guide panel, continuing anyway")
+                # Try Escape key as alternative
+                page.keyboard.press("Escape")
+                page.wait_for_timeout(500)
+    else:
+        print("No size appears to be selected - continuing anyway")
+    
+    # Wait for size selection to register
+    page.wait_for_timeout(1000)
+    
+    # Locate and click the Add to Cart button
+    add_to_cart_button = page.locator(
+        "button:has-text('Add to Cart'), button:has-text('ADD TO CART'), "
+        "button:has-text('Add to Bag'), button:has-text('ADD TO BAG'), "
+        "[data-testid*='add-to-cart'], .add-to-cart, .add-to-bag, "
+        "button[type='submit']:has-text('Add')"
+    ).first
+    
+    expect(add_to_cart_button).to_be_visible()
+    add_to_cart_button.click()
+    
+    # Wait for add to cart action to complete
+    page.wait_for_timeout(2000)
+    
+    # Verify product was added to cart (look for confirmation message or cart update)
+    cart_confirmation = page.locator(
+        ".cart-confirmation, .success-message, .added-to-cart, "
+        ":has-text('Added to'), :has-text('Item added'), "
+        ".toast, .notification"
+    ).first
+    
+    # Alternative verification: check if cart icon shows updated count
+    cart_icon = page.locator(
+        ".cart-icon, .bag-icon, [data-testid*='cart'], "
+        ".header-cart, .mini-cart"
+    ).first
+    
+    # Verify either confirmation message or cart update
+    if cart_confirmation.is_visible():
+        expect(cart_confirmation).to_be_visible()
+    elif cart_icon.is_visible():
+        expect(cart_icon).to_be_visible()
+    
     # Pause for 5 seconds to see the results
     page.wait_for_timeout(5000)

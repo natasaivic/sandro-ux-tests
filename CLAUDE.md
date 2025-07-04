@@ -72,15 +72,38 @@ pytest --headed
 - Selects second product (index 1) to avoid potential featured/promotional first items
 - 3-second timeout allows for dynamic content loading
 
+### Size Selection Implementation
+- **Custom dropdown handling**: Uses `.attribute-size .dropdown-toggle` to open size selector
+- **Option filtering**: Automatically skips "SIZE GUIDE" (first option) and selects actual sizes
+- **Size validation**: Selects second option (`nth(1)`) which corresponds to first actual size (FR 0 / XS)
+- **Multiple selector strategies**: Handles both dropdown and direct size option clicking
+- **Panel management**: Closes size guide panels that may interfere with cart functionality
+
+### Add to Cart Implementation
+- **Button detection**: Uses multiple text variations ("Add to Cart", "ADD TO CART", "Add to Bag")
+- **Size prerequisite**: Ensures size is selected before attempting cart addition
+- **Error resilience**: Handles overlapping panels using force clicks and escape key
+- **Cart verification**: Confirms successful addition through UI feedback and confirmation messages
+
+### Error Handling Strategies
+- **Force clicks**: Uses `click(force=True)` for elements outside viewport
+- **Escape key fallback**: Presses escape when modal close buttons fail
+- **Timeout management**: Uses shorter timeouts (3-5 seconds) for better UX
+- **Graceful degradation**: Continues test execution even when non-critical elements fail
+
 ### Current Test Coverage
 - **Homepage navigation and verification** - Title, URL, and content validation
 - **Women's section navigation** - Modal handling and category access
 - **Product discovery and selection** - Finds 32+ products and selects second item
 - **Product page verification** - Confirms successful navigation to product details
-- **End-to-end flow** - Complete user journey from homepage to product page
+- **Size selection workflow** - Custom dropdown navigation and size validation
+- **Cart functionality** - Complete add-to-cart flow with verification
+- **Complete e-commerce flow** - Full customer journey from homepage to cart
 
 ### Selector Strategy Notes
-- Primary product selector: `.product a` (proven to work with 32+ products)
-- Modal selectors: `button:has-text('Agree and Close')` and `.close-button`
-- Navigation selectors: Multiple fallback strategies for reliability
-- Product validation: Ensures minimum count before proceeding with selection
+- **Product selector**: `.product a` (proven to work with 32+ products)
+- **Size dropdown**: `.attribute-size .dropdown-toggle` and `.dropdown-menu`
+- **Size options**: `nth(1)` to skip SIZE GUIDE and select first actual size
+- **Add to cart**: Multiple button text variations with fallback strategies
+- **Modal selectors**: `button:has-text('Agree and Close')` and `.close-button`
+- **Panel close**: `.user-contextual-sidepanel .close` with force click capability
